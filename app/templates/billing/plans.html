@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Plans - CompliancePro360{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin: 3rem 0;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Choose Your Plan</h1>
+    <p style="color: var(--gray-600); font-size: 1.125rem;">Start managing compliance like a pro</p>
+</div>
+
+<div class="grid grid-3" style="max-width: 1200px; margin: 0 auto;">
+    {% for plan in plans %}
+    <div class="card"
+        style="border: 2px solid {% if current_subscription and current_subscription.plan_id == plan.id %}var(--primary){% else %}var(--gray-200){% endif %}; text-align: center;">
+        <h2 style="color: var(--primary); margin-bottom: 0.5rem;">{{ plan.name }}</h2>
+        <div style="margin: 2rem 0;">
+            <div style="font-size: 3rem; font-weight: 700;">₹{{ plan.price }}</div>
+            <div style="color: var(--gray-600);">per month</div>
+        </div>
+
+        <div style="text-align: left; margin-bottom: 2rem;">
+            <p style="margin-bottom: 1rem;"><strong>{{ plan.companies_included if plan.companies_included != -1 else
+                    'Unlimited' }}</strong> companies included</p>
+            {% if plan.extra_company_cost > 0 %}
+            <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">
+                Additional companies: ₹{{ plan.extra_company_cost }} each
+            </p>
+            {% endif %}
+
+            <div style="border-top: 1px solid var(--gray-200); padding-top: 1rem;">
+                {% for feature in plan.features %}
+                <div style="margin-bottom: 0.5rem; display: flex; align-items: start; gap: 0.5rem;">
+                    <span style="color: var(--success); font-weight: 700;">✓</span>
+                    <span>{{ feature }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if current_subscription and current_subscription.plan_id == plan.id %}
+        <button class="btn btn-outline" style="width: 100%;" disabled>Current Plan</button>
+        {% elif current_subscription %}
+        <form method="POST" action="{{ url_for('billing.change_plan', plan_id=plan.id) }}">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Switch to {{ plan.name }}</button>
+        </form>
+        {% else %}
+        <form method="POST" action="{{ url_for('billing.subscribe', plan_id=plan.id) }}">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ company.name }} <span class="badge bg-secondary fs-6">Dashboard</span></h2>
+    {% if not readonly %}
+    <div>
+        <a href="{{ url_for('main.share_company', company_id=company.id) }}" class="btn btn-info text-white">Share
+            Dashboard</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h4>Compliance Status</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Compliance</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.compliance.name }}</td>
+                    <td>{{ record.due_date }}</td>
+                    <td>
+                        <span
+                            class="badge {% if record.status == 'Completed' %}bg-success{% elif record.status == 'Overdue' %}bg-danger{% else %}bg-warning{% endif %}">
+                            {{ record.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if not readonly %}
+                        <!-- Placeholder for mark complete -->
+                        <button class="btn btn-sm btn-outline-success">Mark Done</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No compliance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        {% if not readonly %}
+        <div class="card p-3 mb-3">
+            <h5>Upload Document</h5>
+            <form action="{{ url_for('main.upload_document', company_id=company.id) }}" method="POST"
+                enctype="multipart/form-data">
+                <div class="mb-2">
+                    <input type="file" name="file" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Upload</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="card p-3">
+            <h5>Recent Uploads</h5>
+            <ul class="list-group list-group-flush">
+                {% for doc in company.documents[-5:] %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ doc.filename }}
+                    <span class="badge bg-light text-dark">{{ doc.uploaded_at.strftime('%Y-%m-%d') }}</span>
+                </li>
+                {% else %}
+                <li class="list-group-item">No documents uploaded.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

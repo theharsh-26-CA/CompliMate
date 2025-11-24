@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Add Company - CompliancePro360{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto;">
+    <h1 style="margin-bottom: 2rem;">Add New Company</h1>
+
+    {% if message %}
+    <div class="alert alert-warning">
+        <span class="alert-icon">⚠</span>
+        {{ message }}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Company Name *</label>
+                <input type="text" name="name" class="form-input" required>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">PAN *</label>
+                    <input type="text" name="pan" class="form-input" required pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+                        placeholder="ABCDE1234F">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">CIN / LLPIN</label>
+                    <input type="text" name="cin" class="form-input" placeholder="U12345MH2023PTC123456">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">GSTIN (Optional - PAN will be auto-extracted)</label>
+                <input type="text" name="gstin" class="form-input"
+                    pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}" placeholder="27ABCDE1234F1Z5">
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-success">Add Company</button>
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

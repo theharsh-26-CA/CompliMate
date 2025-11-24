@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Login - CompliancePro360{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 4rem auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h1 style="color: var(--primary); margin-bottom: 0.5rem;">CompliancePro<span
+                    style="background: linear-gradient(135deg, var(--primary), var(--info)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">360</span>
+            </h1>
+            <p style="color: var(--gray-600);">Sign in to your account</p>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-input" required placeholder="you@example.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-input" required placeholder="••••••••">
+            </div>
+
+            <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" name="remember_me" id="remember">
+                <label for="remember" style="margin: 0; font-weight: 400;">Remember me</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                Sign In
+            </button>
+        </form>
+
+        <p style="text-align: center; color: var(--gray-600);">
+            Don't have an account?
+            <a href="{{ url_for('auth.register') }}" style="color: var(--primary); font-weight: 500;">Register here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

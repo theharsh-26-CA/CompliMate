@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Super Admin Dashboard - CompliancePro360{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1>System Administration</h1>
+    <p style="color: var(--gray-600);">Welcome, Super Administrator</p>
+</div>
+
+<div class="grid grid-4">
+    <div class="stat-card">
+        <div class="stat-value">{{ total_users }}</div>
+        <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #059669, #047857);">
+        <div class="stat-value">{{ total_practitioners }}</div>
+        <div class="stat-label">Practitioners</div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #D97706, #B45309);">
+        <div class="stat-value">{{ total_companies }}</div>
+        <div class="stat-label">Companies</div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #059669, #047857);">
+        <div class="stat-value">{{ active_subscriptions }}</div>
+        <div class="stat-label">Active Subscriptions</div>
+    </div>
+</div>
+
+<div class="grid grid-2" style="margin-top: 2rem;">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Subscription Distribution</h2>
+        </div>
+        <canvas id="subscriptionChart"></canvas>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Revenue Overview</h2>
+        </div>
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 2.5rem; font-weight: 700; color: var(--success);">₹{{ "%.2f"|format(total_revenue) }}
+            </div>
+            <div style="color: var(--gray-600); margin-top: 0.5rem;">Total Revenue</div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <div class="card-header">
+        <h2 class="card-title">Recent Activity</h2>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>User</th>
+                <th>Details</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in recent_logs %}
+            <tr>
+                <td><span class="badge badge-{{ 'success' if 'LOGIN' in log.action else 'warning' }}">{{ log.action
+                        }}</span></td>
+                <td>{{ log.user.email if log.user else 'System' }}</td>
+                <td>{{ log.details or '-' }}</td>
+                <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('subscriptionChart');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for stat in subscription_stats %}'{{ stat[0]}}',{% endfor %}],
+        datasets: [{
+            data: [{% for stat in subscription_stats %}{{ stat[1] }}, {% endfor %}],
+        backgroundColor: ['#1E40AF', '#059669', '#D97706']
+        }]
+    }
+});
+</script>
+{% endblock %}

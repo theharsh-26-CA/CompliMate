@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Compliance Management for Modern Practitioners">
+    <title>{% block title %}CompliancePro360{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% if current_user.is_authenticated %}
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{{ url_for('dashboard.index') }}" class="logo">
+                    CompliancePro<span class="brand-360">360</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                {% if current_user.is_super_admin %}
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Admin</a>
+                <a href="{{ url_for('admin.users') }}" class="nav-link">👥 Users</a>
+                <a href="{{ url_for('admin.subscriptions') }}" class="nav-link">💳 Subscriptions</a>
+                {% elif current_user.is_practitioner %}
+                <a href="{{ url_for('dashboard.index') }}" class="nav-link">📈 Dashboard</a>
+                <a href="{{ url_for('billing.index') }}" class="nav-link">💰 Billing</a>
+                {% endif %}
+
+                <button id="themeToggle" class="theme-toggle" title="Toggle Dark Mode">🌙</button>
+
+                <div class="nav-user">
+                    <span class="user-name">{{ current_user.name }}</span>
+                    <div class="user-menu">
+                        <span class="role-badge">{{ current_user.role.replace('_', ' ').title() }}</span>
+                        <a href="{{ url_for('auth.logout') }}" class="btn-logout">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="main-content">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="alerts">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} animate-on-scroll">
+                    <span class="alert-icon">
+                        {% if category == 'success' %}✓
+                        {% elif category == 'error' %}✕
+                        {% elif category == 'warning' %}⚠
+                        {% else %}ℹ{% endif %}
+                    </span>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 CompliancePro360. Built with ❤️ for Compliance Professionals.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

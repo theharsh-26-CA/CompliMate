@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Compliance Pro360{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 4rem 0;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem;">
+        Welcome to <span style="color: var(--primary);">CompliancePro<span style="background: linear-gradient(135deg, var(--primary), var(--info)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">360</span></span>
+    </h1>
+    <p style="font-size: 1.25rem; color: var(--gray-600); margin-bottom: 3rem;">
+        AI-Powered Compliance Management for Modern Practitioners
+    </p>
+
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">
+            Go to Dashboard
+        </a>
+    {% else %}
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">
+                Get Started
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline" style="font-size: 1.125rem; padding: 1rem 2rem;">
+                Sign In
+            </a>
+        </div>
+    {% endif %}
+
+    <div class="grid grid-3" style="margin-top: 4rem; max-width: 1000px; margin-left: auto; margin-right: auto;">
+        <div class="card">
+            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">AI-Powered</h3>
+            <p style="color: var(--gray-600);">Dual-LLM engine automatically tracks regulatory changes</p>
+        </div>
+        <div class="card">
+            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Multi-Tenant</h3>
+            <p style="color: var(--gray-600);">Manage multiple companies with secure data isolation</p>
+        </div>
+        <div class="card">
+            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Secure Sharing</h3>
+            <p style="color: var(--gray-600);">Share dashboards with clients via secure links</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

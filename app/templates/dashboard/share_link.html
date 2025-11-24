@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Share Dashboard - CompliancePro360{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 4rem auto;">
+    <div class="card animate-on-scroll" style="text-align: center; padding: 3rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔗</div>
+        <h1 style="margin-bottom: 0.5rem;">Share Dashboard</h1>
+        <p style="font-size: 1.25rem; color: var(--primary); margin-bottom: 0.5rem;">{{ company.name }}</p>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+            Share this secure link for view-only access to the compliance dashboard
+        </p>
+
+        <div
+            style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem; position: relative;">
+            <input type="text" value="{{ link }}" id="shareLink" readonly
+                style="width: 100%; padding: 1rem; border: 2px solid var(--border-color); background: var(--bg-primary); border-radius: var(--radius); text-align: center; font-family: 'Courier New', monospace; font-size: 0.875rem; color: var(--text-primary);">
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <button onclick="copyLink()" class="btn btn-primary" data-copy="{{ link }}">
+                📋 Copy Link
+            </button>
+            <a href="{{ link }}" target="_blank" class="btn btn-outline">
+                👁️ Preview
+            </a>
+            <a href="{{ url_for('dashboard.company_view', company_id=company.id) }}" class="btn btn-outline">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+        <div
+            style="margin-top: 2rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: var(--radius); border-left: 4px solid var(--info);">
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">
+                <strong>🔒 Security Note:</strong> This link is permanent and secure. Anyone with this link can view the
+                company's compliance dashboard.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyLink() {
+        Toast.show('Link copied to clipboard!', 'success', 2000);
+    }
+</script>
+{% endblock %}

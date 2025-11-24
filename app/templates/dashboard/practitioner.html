@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Practitioner Dashboard - CompliancePro360{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header animate-on-scroll" style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Welcome back, <span style="background: linear-gradient(135deg, var(--primary), var(--info)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ current_user.name }}</span>! 👋</h1>
+        <p style="color: var(--text-secondary); font-size: 1.125rem;">Here's what's happening with your compliance management</p>
+    </div>
+
+    <!-- Subscription Status -->
+    {% if subscription %}
+    <div class="card animate-on-scroll" style="background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Current Plan</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">{{ subscription.plan.name }}</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Status</div>
+                <span class="badge badge-{{ 'success' if subscription.status == 'active' else 'warning' }}">
+                    {{ subscription.status.upper() }}
+                </span>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card animate-on-scroll" style="text-align: center; padding: 2rem; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);">
+        <h3 style="margin-bottom: 1rem;">⚠️ No Active Subscription</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Subscribe to start managing your companies</p>
+        <a href="{{ url_for('billing.view_plans') }}" class="btn btn-primary">View Plans</a>
+    </div>
+    {% endif %}
+
+    <!-- Stats Grid with Animation -->
+    <div class="grid grid-4" style="margin-top: 2rem;">
+        <div class="stat-card animate-on-scroll" style="animation-delay: 0.1s;">
+            <div class="stat-value">{{ companies|length }}</div>
+            <div class="stat-label">🏢 Active Companies</div>
+        </div>
+        <div class="stat-card animate-on-scroll" style="background: linear-gradient(135deg, #059669, #047857); animation-delay: 0.2s;">
+            <div class="stat-value">{{ total_compliances }}</div>
+            <div class="stat-label">📋 Total Compliances</div>
+        </div>
+        <div class="stat-card animate-on-scroll" style="background: linear-gradient(135deg, #D97706, #B45309); animation-delay: 0.3s;">
+            <div class="stat-value">{{ pending_count }}</div>
+            <div class="stat-label">⏳ Pending</div>
+        </div>
+        <div class="stat-card animate-on-scroll" style="background: linear-gradient(135deg, #DC2626, #B91C1C); animation-delay: 0.4s;">
+            <div class="stat-value">{{ overdue_count }}</div>
+            <div class="stat-label">🔴 Overdue</div>
+        </div>
+    </div>
+
+    <!-- Usage Card -->
+    {% if usage %}
+    <div class="card animate-on-scroll" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">📊 Subscription Usage</h2>
+        </div>
+        <div style="padding: 1rem 0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <span><strong>Companies:</strong> {{ usage.company_count }} / {% if usage.companies_included == -1 %}∞{% else %}{{ usage.companies_included }}{% endif %}</span>
+                <span style="color: var(--success); font-weight: 600;">
+                    {% if usage.companies_included == -1 %}Unlimited Plan
+                    {% else %}{{ ((usage.company_count / usage.companies_included) * 100) | round | int }}% Used
+                    {% endif %}
+                </span>
+            </div>
+
+            {% if usage.companies_included != -1 %}
+            {% set usage_percent = (usage.company_count / usage.companies_included * 100) if usage.companies_included > 0 else 0 %}
+            <div style="background: var(--gray-200); height: 8px; border-radius: 999px; overflow: hidden;">
+                <div class="usage-bar" data-width="{{ usage_percent }}" style="background: linear-gradient(90deg, var(--success), var(--info)); height: 100%; width: 0; transition: width 0.6s ease;"></div>
+            </div>
+            {% endif %}
+
+            {% if usage.extra_companies > 0 %}
+            <p style="color: var(--warning); margin-top: 1rem; padding: 0.75rem; background: rgba(217, 119, 6, 0.1); border-radius: var(--radius);">
+                <strong>⚠️ Extra Companies:</strong> {{ usage.extra_companies }} (₹{{ usage.pending_amount }} pending in next invoice)
+            </p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Companies Section -->
+    <div class="card animate-on-scroll" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">🏢 Your Companies</h2>
+            <a href="{{ url_for('dashboard.add_company') }}" class="btn btn-primary">+ Add Company</a>
+        </div>
+
+        {% if companies %}
+        <div class="grid grid-3" style="margin-top: 1rem;">
+            {% for company in companies %}
+            <div class="card animate-on-scroll" data-delay="{{ loop.index * 0.1 }}" style="border: 2px solid var(--border-color);">
+                <div style="margin-bottom: 1rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--info)); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">
+                        {{ company.name[0].upper() }}
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem; color: var(--primary); font-size: 1.25rem;">{{ company.name }}</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                        <strong>PAN:</strong> {{ company.pan }}
+                    </p>
+                    {% if company.gstin %}
+                    <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                        <strong>GSTIN:</strong> {{ company.gstin }}
+                    </p>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('dashboard.company_view', company_id=company.id) }}" class="btn btn-outline" style="width: 100%; text-align: center;">
+                    View Dashboard →
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🏢</div>
+            <p style="font-size: 1.125rem;">No companies added yet.</p>
+            <p style="margin-bottom: 1.5rem;">Click "Add Company" to get started!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Set usage bar width from data attribute
+const usageBar = document.querySelector('.usage-bar');
+if (usageBar) {
+    setTimeout(() => { usageBar.style.width = usageBar.dataset.width + '%'; }, 100);
+}
+
+// Set animation delays for company cards from data attributes
+document.querySelectorAll('[data-delay]').forEach(el => {
+    el.style.animationDelay = el.dataset.delay + 's';
+});
+</script>
+{% endblock %}
