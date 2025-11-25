@@ -1,141 +1,257 @@
 {% extends "base.html" %}
 
-{% block title %}Practitioner Dashboard - CompliancePro360{% endblock %}
+{% block title %}Dashboard - CompliancePro360{% endblock %}
 
 {% block content %}
 <div class="dashboard">
-    <div class="dashboard-header animate-on-scroll" style="margin-bottom: 2rem;">
-        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Welcome back, <span style="background: linear-gradient(135deg, var(--primary), var(--info)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ current_user.name }}</span>! 👋</h1>
-        <p style="color: var(--text-secondary); font-size: 1.125rem;">Here's what's happening with your compliance management</p>
+    <!-- Header -->
+    <div class="dashboard-header"
+        style="margin-bottom: 2.5rem; padding: 2rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: var(--radius-lg); color: white;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+                <h1 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                    Welcome back, {{ current_user.name }}! 👋
+                </h1>
+                <p style="opacity: 0.95; font-size: 1.125rem;">
+                    Here's your compliance overview for today
+                </p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ url_for('dashboard.add_company') }}" class="btn"
+                    style="background: white; color: var(--primary);">
+                    + Add Company
+                </a>
+            </div>
+        </div>
     </div>
 
-    <!-- Subscription Status -->
+    <!-- Subscription Status Banner -->
     {% if subscription %}
-    <div class="card animate-on-scroll" style="background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); margin-bottom: 2rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="card"
+        style="background: linear-gradient(135deg, rgba(15, 118, 110, 0.05), rgba(20, 184, 166, 0.05)); border-left: 4px solid var(--primary); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
             <div>
-                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Current Plan</div>
-                <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">{{ subscription.plan.name }}</div>
+                <div
+                    style="font-size: 0.8125rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem; letter-spacing: 0.05em;">
+                    Current Plan</div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">{{ subscription.plan.name
+                        }}</div>
+                    <span class="badge badge-success">{{ subscription.status.upper() }}</span>
+                </div>
             </div>
-            <div style="text-align: right;">
-                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Status</div>
-                <span class="badge badge-{{ 'success' if subscription.status == 'active' else 'warning' }}">
-                    {{ subscription.status.upper() }}
-                </span>
-            </div>
+            <a href="{{ url_for('billing.index') }}" class="btn btn-outline">
+                View Billing →
+            </a>
         </div>
     </div>
     {% else %}
-    <div class="card animate-on-scroll" style="text-align: center; padding: 2rem; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);">
-        <h3 style="margin-bottom: 1rem;">⚠️ No Active Subscription</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Subscribe to start managing your companies</p>
-        <a href="{{ url_for('billing.view_plans') }}" class="btn btn-primary">View Plans</a>
+    <div class="card"
+        style="text-align: center; padding: 2.5rem; background: linear-gradient(135deg, rgba(225, 29, 72, 0.05), rgba(239, 68, 68, 0.05)); border-left: 4px solid var(--danger); margin-bottom: 2rem;">
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">⚠️ No Active Subscription</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1.125rem;">Subscribe to start managing
+            your companies and unlock all features</p>
+        <a href="{{ url_for('billing.view_plans') }}" class="btn btn-primary">View Plans & Pricing</a>
     </div>
     {% endif %}
 
-    <!-- Stats Grid with Animation -->
-    <div class="grid grid-4" style="margin-top: 2rem;">
-        <div class="stat-card animate-on-scroll" style="animation-delay: 0.1s;">
-            <div class="stat-value">{{ companies|length }}</div>
-            <div class="stat-label">🏢 Active Companies</div>
-        </div>
-        <div class="stat-card animate-on-scroll" style="background: linear-gradient(135deg, #059669, #047857); animation-delay: 0.2s;">
-            <div class="stat-value">{{ total_compliances }}</div>
-            <div class="stat-label">📋 Total Compliances</div>
-        </div>
-        <div class="stat-card animate-on-scroll" style="background: linear-gradient(135deg, #D97706, #B45309); animation-delay: 0.3s;">
-            <div class="stat-value">{{ pending_count }}</div>
-            <div class="stat-label">⏳ Pending</div>
-        </div>
-        <div class="stat-card animate-on-scroll" style="background: linear-gradient(135deg, #DC2626, #B91C1C); animation-delay: 0.4s;">
-            <div class="stat-value">{{ overdue_count }}</div>
-            <div class="stat-label">🔴 Overdue</div>
+    <!-- Key Metrics -->
+    <div style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem;">
+            📊 Key Metrics
+        </h2>
+        <div class="grid grid-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
+                <div class="stat-value">{{ companies|length }}</div>
+                <div class="stat-label">🏢 Active Companies</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--success), #047857);">
+                <div class="stat-value">{{ total_compliances }}</div>
+                <div class="stat-label">📋 Total Compliances</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--warning), #D97706);">
+                <div class="stat-value">{{ pending_count }}</div>
+                <div class="stat-label">⏳ Pending</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--danger), #BE123C);">
+                <div class="stat-value">{{ overdue_count }}</div>
+                <div class="stat-label">🔴 Overdue</div>
+            </div>
         </div>
     </div>
 
-    <!-- Usage Card -->
+    <!-- Usage Analytics -->
     {% if usage %}
-    <div class="card animate-on-scroll" style="margin-top: 2rem;">
+    <div class="card" style="margin-bottom: 2.5rem;">
         <div class="card-header">
-            <h2 class="card-title">📊 Subscription Usage</h2>
+            <h2 class="card-title">📈 Subscription Usage</h2>
         </div>
-        <div style="padding: 1rem 0;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                <span><strong>Companies:</strong> {{ usage.company_count }} / {% if usage.companies_included == -1 %}∞{% else %}{{ usage.companies_included }}{% endif %}</span>
-                <span style="color: var(--success); font-weight: 600;">
-                    {% if usage.companies_included == -1 %}Unlimited Plan
-                    {% else %}{{ ((usage.company_count / usage.companies_included) * 100) | round | int }}% Used
-                    {% endif %}
-                </span>
+        <div>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                <div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Companies
+                        Managed</div>
+                    <div style="font-size: 1.75rem; font-weight: 700; color: var(--text-primary);">
+                        {{ usage.company_count }} / {% if usage.companies_included == -1 %}∞{% else %}{{
+                        usage.companies_included }}{% endif %}
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="badge"
+                        style="background: var(--success); color: white; font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        {% if usage.companies_included == -1 %}
+                        Unlimited Plan
+                        {% else %}
+                        {{ ((usage.company_count / usage.companies_included) * 100) | round | int }}% Used
+                        {% endif %}
+                    </span>
+                </div>
             </div>
 
             {% if usage.companies_included != -1 %}
-            {% set usage_percent = (usage.company_count / usage.companies_included * 100) if usage.companies_included > 0 else 0 %}
-            <div style="background: var(--gray-200); height: 8px; border-radius: 999px; overflow: hidden;">
-                <div class="usage-bar" data-width="{{ usage_percent }}" style="background: linear-gradient(90deg, var(--success), var(--info)); height: 100%; width: 0; transition: width 0.6s ease;"></div>
+            {% set usage_percent = (usage.company_count / usage.companies_included * 100) if usage.companies_included >
+            0 else 0 %}
+            <div
+                style="background: var(--gray-200); height: 12px; border-radius: 999px; overflow: hidden; margin-bottom: 1rem;">
+                <div class="usage-bar" data-width="{{ usage_percent }}"
+                    style="background: linear-gradient(90deg, var(--primary), var(--primary-light)); height: 100%; width: 0; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
+                </div>
             </div>
             {% endif %}
 
             {% if usage.extra_companies > 0 %}
-            <p style="color: var(--warning); margin-top: 1rem; padding: 0.75rem; background: rgba(217, 119, 6, 0.1); border-radius: var(--radius);">
-                <strong>⚠️ Extra Companies:</strong> {{ usage.extra_companies }} (₹{{ usage.pending_amount }} pending in next invoice)
-            </p>
+            <div
+                style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius); border-left: 4px solid var(--warning);">
+                <div style="display: flex; align-items: start; gap: 0.75rem;">
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">Extra
+                            Companies Detected</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9375rem;">
+                            You have {{ usage.extra_companies }} companies beyond your plan limit. Additional charges of
+                            ₹{{ usage.pending_amount }} will be added to your next invoice.
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% endif %}
         </div>
     </div>
     {% endif %}
 
-    <!-- Companies Section -->
-    <div class="card animate-on-scroll" style="margin-top: 2rem;">
-        <div class="card-header">
+    <!-- Companies Overview -->
+    <div style="margin-bottom: 2.5rem;">
+        <div class="card-header" style="padding-bottom: 1rem;">
             <h2 class="card-title">🏢 Your Companies</h2>
             <a href="{{ url_for('dashboard.add_company') }}" class="btn btn-primary">+ Add Company</a>
         </div>
 
         {% if companies %}
-        <div class="grid grid-3" style="margin-top: 1rem;">
+        <div class="grid grid-3" style="margin-top: 1.5rem;">
             {% for company in companies %}
-            <div class="card animate-on-scroll" data-delay="{{ loop.index * 0.1 }}" style="border: 2px solid var(--border-color);">
-                <div style="margin-bottom: 1rem;">
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--info)); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">
+            <div class="card" data-delay="{{ loop.index * 0.1 }}"
+                style="border: 2px solid var(--border-color); transition: var(--transition);">
+                <div style="display: flex; align-items: start; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div
+                        style="width: 56px; height: 56px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem; font-weight: 700; flex-shrink: 0;">
                         {{ company.name[0].upper() }}
                     </div>
-                    <h3 style="margin-bottom: 0.5rem; color: var(--primary); font-size: 1.25rem;">{{ company.name }}</h3>
-                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
-                        <strong>PAN:</strong> {{ company.pan }}
-                    </p>
+                    <div style="flex: 1; min-width: 0;">
+                        <h3
+                            style="font-size: 1.125rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; overflow: hidden; text-overflow: ellipsis;">
+                            {{ company.name }}
+                        </h3>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="badge"
+                                style="background: var(--gray-100); color: var(--text-secondary); font-size: 0.75rem;">
+                                {{ company.pan }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: 0.75rem; margin-bottom: 1.5rem; font-size: 0.875rem;">
                     {% if company.gstin %}
-                    <p style="font-size: 0.875rem; color: var(--text-secondary);">
-                        <strong>GSTIN:</strong> {{ company.gstin }}
-                    </p>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">GSTIN:</span>
+                        <span style="font-weight: 600; color: var(--text-primary); font-family: var(--font-mono);">{{
+                            company.gstin }}</span>
+                    </div>
+                    {% endif %}
+                    {% if company.cin %}
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">CIN:</span>
+                        <span
+                            style="font-weight: 600; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.75rem;">{{
+                            company.cin }}</span>
+                    </div>
                     {% endif %}
                 </div>
-                <a href="{{ url_for('dashboard.company_view', company_id=company.id) }}" class="btn btn-outline" style="width: 100%; text-align: center;">
+
+                <a href="{{ url_for('dashboard.company_view', company_id=company.id) }}" class="btn btn-outline"
+                    style="width: 100%; justify-content: center;">
                     View Dashboard →
                 </a>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">🏢</div>
-            <p style="font-size: 1.125rem;">No companies added yet.</p>
-            <p style="margin-bottom: 1.5rem;">Click "Add Company" to get started!</p>
+        <div class="card" style="text-align: center; padding: 4rem 2rem;">
+            <div style="font-size: 5rem; margin-bottom: 1.5rem; opacity: 0.5;">🏢</div>
+            <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem;">No
+                Companies Added Yet</h3>
+            <p
+                style="color: var(--text-secondary); font-size: 1.125rem; margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+                Get started by adding your first company to monitor their compliance obligations
+            </p>
+            <a href="{{ url_for('dashboard.add_company') }}" class="btn btn-primary" style="padding: 1rem 2rem;">
+                + Add Your First Company
+            </a>
         </div>
         {% endif %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card" style="background: linear-gradient(135deg, var(--bg-secondary), var(--white));">
+        <div class="card-header">
+            <h2 class="card-title">⚡ Quick Actions</h2>
+        </div>
+        <div class="grid grid-4">
+            <a href="{{ url_for('dashboard.add_company') }}" class="card"
+                style="text-align: center; padding: 1.5rem; text-decoration: none; border: 2px solid var(--border-color);">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem;">➕</div>
+                <div style="font-weight: 600; color: var(--text-primary);">Add Company</div>
+            </a>
+            <a href="{{ url_for('billing.index') }}" class="card"
+                style="text-align: center; padding: 1.5rem; text-decoration: none; border: 2px solid var(--border-color);">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem;">💳</div>
+                <div style="font-weight: 600; color: var(--text-primary);">View Billing</div>
+            </a>
+            <a href="#" class="card"
+                style="text-align: center; padding: 1.5rem; text-decoration: none; border: 2px solid var(--border-color);">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem;">📄</div>
+                <div style="font-weight: 600; color: var(--text-primary);">Export Report</div>
+            </a>
+            <a href="#" class="card"
+                style="text-align: center; padding: 1.5rem; text-decoration: none; border: 2px solid var(--border-color);">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚙️</div>
+                <div style="font-weight: 600; color: var(--text-primary);">Settings</div>
+            </a>
+        </div>
     </div>
 </div>
 
 <script>
-// Set usage bar width from data attribute
-const usageBar = document.querySelector('.usage-bar');
-if (usageBar) {
-    setTimeout(() => { usageBar.style.width = usageBar.dataset.width + '%'; }, 100);
-}
+    // Set usage bar width from data attribute  
+    const usageBar = document.querySelector('.usage-bar');
+    if (usageBar) {
+        setTimeout(() => { usageBar.style.width = usageBar.dataset.width + '%'; }, 200);
+    }
 
-// Set animation delays for company cards from data attributes
-document.querySelectorAll('[data-delay]').forEach(el => {
-    el.style.animationDelay = el.dataset.delay + 's';
-});
+    // Set animation delays for company cards
+    document.querySelectorAll('[data-delay]').forEach(el => {
+        el.style.animationDelay = el.dataset.delay + 's';
+    });
 </script>
 {% endblock %}

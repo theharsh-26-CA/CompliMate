@@ -3,40 +3,178 @@
 {% block title %}Login - CompliancePro360{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 4rem auto;">
-    <div class="card">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <h1 style="color: var(--primary); margin-bottom: 0.5rem;">CompliancePro<span
-                    style="background: linear-gradient(135deg, var(--primary), var(--info)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">360</span>
-            </h1>
-            <p style="color: var(--gray-600);">Sign in to your account</p>
+<div
+    style="min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center; padding: 3rem 1rem; background: var(--bg-secondary);">
+    <div class="container" style="max-width: 1100px;">
+        <div class="grid grid-2" style="gap: 3rem; align-items: center;">
+            <!-- Left Column - Login Form -->
+            <div class="card" style="padding: 3rem;">
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">
+                        Welcome Back
+                    </h1>
+                    <p style="color: var(--text-secondary); font-size: 1.125rem;">
+                        Sign in to your CompliancePro360 account
+                    </p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="you@company.com"
+                            required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label for="password" class="form-label" style="margin-bottom: 0;">Password</label>
+                            <a href="#"
+                                style="color: var(--primary); text-decoration: none; font-size: 0.875rem; font-weight: 500;">
+                                Forgot password?
+                            </a>
+                        </div>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••"
+                            required>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" name="remember_me"
+                                style="width: 1.125rem; height: 1.125rem; cursor: pointer;">
+                            <span style="color: var(--text-secondary); font-size: 0.9375rem;">Keep me signed in</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1rem;">
+                        Sign In to Dashboard
+                    </button>
+                </form>
+
+                <!-- Security Notice -->
+                <div
+                    style="margin-top: 2rem; padding: 1rem; background: rgba(15, 118, 110, 0.05); border-radius: var(--radius); border-left: 3px solid var(--primary);">
+                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">🔒</span>
+                        <div>
+                            <div
+                                style="font-weight: 600; color: var(--text-primary); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                                Secure Login
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.8125rem; line-height: 1.6;">
+                                Your connection is encrypted with bank-grade 256-bit SSL. All login attempts are logged
+                                and monitored.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 2rem; text-align: center; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                    <p style="color: var(--text-secondary); font-size: 0.9375rem;">
+                        Don't have an account?
+                        <a href="{{ url_for('auth.register') }}"
+                            style="color: var(--primary); text-decoration: none; font-weight: 600;">
+                            Start Free Trial →
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column - Trust Indicators & Benefits -->
+            <div>
+                <div style="margin-bottom: 3rem;">
+                    <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem;">
+                        Trusted by <span style="color: var(--primary);">500+</span> Compliance Professionals
+                    </h2>
+                    <p style="color: var(--text-secondary); font-size: 1.125rem; line-height: 1.7;">
+                        Join leading CA firms and corporate compliance teams managing critical regulatory obligations
+                        with confidence.
+                    </p>
+                </div>
+
+                <!-- Trust Badges -->
+                <div style="display: grid; gap: 1.5rem;">
+                    <div style="display: flex; align-items: start; gap: 1rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, rgba(15, 118, 110, 0.1), rgba(20, 184, 166, 0.1)); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <span style="font-size: 1.5rem;">✓</span>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">ISO 27001
+                                Certified</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6;">
+                                International standard for information security management systems
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: start; gap: 1rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, rgba(15, 118, 110, 0.1), rgba(20, 184, 166, 0.1)); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <span style="font-size: 1.5rem;">🛡️</span>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">SOC 2
+                                Type II Compliant</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6;">
+                                Audited security controls for availability, confidentiality, and privacy
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: start; gap: 1rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, rgba(15, 118, 110, 0.1), rgba(20, 184, 166, 0.1)); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <span style="font-size: 1.5rem;">⚡</span>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">99.9%
+                                Uptime SLA</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6;">
+                                Enterprise-grade infrastructure with 24/7 monitoring and support
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: start; gap: 1rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, rgba(15, 118, 110, 0.1), rgba(20, 184, 166, 0.1)); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <span style="font-size: 1.5rem;">🔐</span>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">GDPR &
+                                Data Privacy</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6;">
+                                Full compliance with international data protection regulations
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial Quote -->
+                <div
+                    style="margin-top: 3rem; padding: 1.5rem; background: var(--white); border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
+                    <div
+                        style="color: var(--text-secondary); font-style: italic; margin-bottom: 1rem; line-height: 1.7;">
+                        "CompliancePro360 transformed how we manage compliance for our 150+ clients. The AI updates save
+                        us 20+ hours every month."
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                            RK
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 0.9375rem;">Rajesh
+                                Kumar</div>
+                            <div style="color: var(--text-secondary); font-size: 0.8125rem;">Senior Partner, Kumar &
+                                Associates LLP</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <form method="POST">
-            <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-input" required placeholder="you@example.com">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-input" required placeholder="••••••••">
-            </div>
-
-            <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
-                <input type="checkbox" name="remember_me" id="remember">
-                <label for="remember" style="margin: 0; font-weight: 400;">Remember me</label>
-            </div>
-
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-                Sign In
-            </button>
-        </form>
-
-        <p style="text-align: center; color: var(--gray-600);">
-            Don't have an account?
-            <a href="{{ url_for('auth.register') }}" style="color: var(--primary); font-weight: 500;">Register here</a>
-        </p>
     </div>
 </div>
 {% endblock %}
